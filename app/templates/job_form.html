@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h1>{{ "İşi Düzenle" if job else "Yeni İş" }}</h1>
+
+<form method="post" class="form">
+    <label>Ad
+        <input type="text" name="name" required value="{{ job.name if job else '' }}"
+               placeholder="Örn: Bilgisayar/elektronik ilanları">
+    </label>
+
+    <label>Feed / arama URL'si
+        <input type="url" name="feed_url" required value="{{ job.feed_url if job else '' }}"
+               placeholder="https://nebenan.de/feed/marketplace?content_types=marketplace_free&category=computer_electronics">
+    </label>
+
+    <label>Kategori
+        <select name="category">
+            <option value="">-</option>
+            {% for c in categories %}
+            <option value="{{ c }}" {% if job and job.category == c %}selected{% endif %}>{{ c }}</option>
+            {% endfor %}
+        </select>
+    </label>
+
+    <label>Arama kelimeleri (virgülle ayır, en az biri geçerse eşleşir; boş = hepsi)
+        <input type="text" name="keywords" value="{{ job.keywords if job else '' }}"
+               placeholder="laptop, monitör, klavye">
+    </label>
+
+    <label>Kara liste (virgülle ayır, biri geçerse ilan elenir)
+        <input type="text" name="blacklist" value="{{ job.blacklist if job else '' }}"
+               placeholder="bozuk, arızalı, yedek parça">
+    </label>
+
+    <label>Kontrol aralığı (dakika)
+        <input type="number" name="interval_minutes" min="5" value="{{ job.interval_minutes if job else 15 }}">
+    </label>
+
+    {% if job %}
+    <label class="checkbox">
+        <input type="checkbox" name="active" {% if job.active %}checked{% endif %}>
+        Aktif
+    </label>
+    {% endif %}
+
+    <button type="submit">{{ "Kaydet" if job else "Oluştur" }}</button>
+</form>
+
+{% endblock %}

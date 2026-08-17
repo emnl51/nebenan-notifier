@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h1>İşler</h1>
+
+{% if not jobs %}
+    <p class="empty">Henüz iş yok. <a href="{{ url_for('job_new') }}">İlk işini oluştur</a>.</p>
+{% else %}
+<table class="jobs-table">
+    <thead>
+        <tr>
+            <th>Ad</th>
+            <th>Kategori</th>
+            <th>Anahtar kelime</th>
+            <th>Kara liste</th>
+            <th>Aralık</th>
+            <th>Durum</th>
+            <th>Son çalışma</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for job in jobs %}
+        <tr>
+            <td>{{ job.name }}</td>
+            <td>{{ job.category or "-" }}</td>
+            <td>{{ job.keywords or "-" }}</td>
+            <td>{{ job.blacklist or "-" }}</td>
+            <td>{{ job.interval_minutes }} dk</td>
+            <td>
+                {% if job.active %}<span class="badge active">Aktif</span>
+                {% else %}<span class="badge inactive">Pasif</span>{% endif %}
+            </td>
+            <td class="small">{{ job.last_status or "-" }}</td>
+            <td class="actions">
+                <a href="{{ url_for('job_edit', job_id=job.id) }}">Düzenle</a>
+                <form method="post" action="{{ url_for('job_run_now', job_id=job.id) }}" style="display:inline">
+                    <button type="submit">Şimdi çalıştır</button>
+                </form>
+                <form method="post" action="{{ url_for('job_delete', job_id=job.id) }}" style="display:inline"
+                      onsubmit="return confirm('Silinsin mi?')">
+                    <button type="submit" class="danger">Sil</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endif %}
+
+<h1>Bulunan İlanlar</h1>
+
+{% if not listings %}
+    <p class="empty">Henüz ilan bulunamadı.</p>
+{% else %}
+<div class="cards">
+    {% for l in listings %}
+    <div class="card">
+        {% if l.image_url %}
+        <img src="{{ l.image_url }}" alt="">
+        {% else %}
+        <div class="no-image">Görsel yok</div>
+        {% endif %}
+        <div class="card-body">
+            <div class="card-job">{{ l.job_name }}</div>
+            <h3>{{ l.title }}</h3>
+            <div class="card-price">{{ l.price }}</div>
+            <a href="{{ l.url }}" target="_blank" rel="noopener">İlana git →</a>
+            <div class="card-date">{{ l.found_at[:16] }}</div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+{% endblock %}

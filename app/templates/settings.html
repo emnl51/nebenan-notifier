@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h1>Telegram Ayarları</h1>
+<form method="post" class="form">
+    <input type="hidden" name="action" value="save_telegram">
+    <label>Bot Token
+        <input type="text" name="telegram_bot_token" value="{{ settings.telegram_bot_token or '' }}"
+               placeholder="123456:ABC-DEF...">
+    </label>
+    <label>Chat ID
+        <input type="text" name="telegram_chat_id" value="{{ settings.telegram_chat_id or '' }}"
+               placeholder="123456789">
+    </label>
+    <button type="submit">Kaydet</button>
+</form>
+<form method="post" style="display:inline">
+    <input type="hidden" name="action" value="test_telegram">
+    <button type="submit">Test mesajı gönder</button>
+</form>
+
+<h1>nebenan.de Ayarları</h1>
+<form method="post" class="form">
+    <input type="hidden" name="action" value="save_nebenan">
+    <label>Kullanıcı adı / e-posta
+        <input type="text" name="nebenan_username" value="{{ settings.nebenan_username or '' }}">
+    </label>
+    <label>Şifre
+        <input type="password" name="nebenan_password" value="{{ settings.nebenan_password or '' }}">
+    </label>
+    <button type="submit">Kaydet</button>
+</form>
+
+<form method="post" style="display:inline">
+    <input type="hidden" name="action" value="login_nebenan">
+    <button type="submit">nebenan.de'ye giriş yap</button>
+</form>
+
+<p class="status">
+    Giriş durumu:
+    {% if logged_in %}
+        <span class="badge active">Oturum kayıtlı</span>
+    {% else %}
+        <span class="badge inactive">Giriş yapılmadı</span>
+    {% endif %}
+    {% if settings.last_login_at %}
+        (son giriş denemesi: {{ settings.last_login_at[:16] }})
+    {% endif %}
+</p>
+
+<div class="note">
+    <strong>Not:</strong> Şifre bu prototipte düz metin olarak veritabanında saklanır.
+    Kişisel/lokal kullanım dışında önerilmez — üretim kullanımı için şifreleme eklenmelidir.
+    Ayrıca nebenan.de captcha veya 2FA gösterirse otomatik giriş başarısız olur;
+    bu durumda <code>app/scraper.py</code> içindeki login akışının manuel session-cookie
+    yöntemine çevrilmesi gerekir.
+</div>
+
+{% endblock %}
